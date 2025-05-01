@@ -776,7 +776,7 @@ span {
 .leadership-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-    gap: 1.5rem;
+    gap: 2.25rem;
 }
 
 .leadership-card {
@@ -987,11 +987,54 @@ span {
     font-size: 1.2rem;
 }
 
+/* ===== Horizontal Metrics Grid ===== */
 .leadership-card .metrics-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 1rem;
-}
+    display: flex; /* Makes metrics flow horizontally */
+    gap: 0.75rem; /* Space between metrics */
+    overflow-x: auto; /* Allows scrolling if needed */
+    padding-bottom: 0.5rem; /* Prevents scrollbar overlap */
+    scrollbar-width: none; /* Hides scrollbar in Firefox */
+  }
+  
+  .leadership-card .metrics-grid::-webkit-scrollbar {
+    display: none; /* Hides scrollbar in Chrome/Safari */
+  }
+  
+  .leadership-card .metric-card {
+    min-width: 90px; /* Minimum width */
+    flex: 1; /* Distributes space evenly */
+    padding: 0.75rem;
+    white-space: nowrap; /* Keeps text in one line */
+    text-align: center;
+  }
+  
+  /* Mobile Adjustments */
+  @media (max-width: 768px) {
+    .leadership-card .metrics-grid {
+      gap: 0.5rem;
+    }
+    
+    .leadership-card .metric-card {
+      min-width: 80px;
+      padding: 0.5rem;
+    }
+    
+    .leadership-card .metric-value {
+      font-size: 1.4rem;
+    }
+    
+    .leadership-card .metric-label {
+      font-size: 0.7rem;
+    }
+  }
+  
+  /* Small Phone Optimization */
+  @media (max-width: 400px) {
+    .leadership-card .metric-card {
+      min-width: 70px;
+      padding: 0.5rem 0.25rem;
+    }
+  }
 
 .leadership-card .metric-card {
     background: var(--bg-color);
