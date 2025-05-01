@@ -461,3 +461,5 @@ ScrollReveal().reveal('.leadership-card', {
 
     
 });
+
+
