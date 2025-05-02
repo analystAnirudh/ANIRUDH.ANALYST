@@ -94,6 +94,50 @@ window.addEventListener('scroll', () => {
     header.classList.toggle('sticky', window.scrollY > 100);
 });
 
+// Smooth scrolling for all navigation links
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function(e) {
+        e.preventDefault();
+        
+        const targetId = this.getAttribute('href');
+        if (targetId === '#') return;
+        
+        const targetElement = document.querySelector(targetId);
+        if (targetElement) {
+            window.scrollTo({
+                top: targetElement.offsetTop - 100,
+                behavior: 'smooth'
+            });
+            
+            // Update active nav link
+            document.querySelectorAll('.nav-btn').forEach(link => {
+                link.classList.remove('active');
+            });
+            this.classList.add('active');
+        }
+    });
+});
+
+// Active nav link on scroll
+window.addEventListener('scroll', () => {
+    const scrollPosition = window.scrollY;
+    
+    document.querySelectorAll('section').forEach(section => {
+        const sectionTop = section.offsetTop - 150;
+        const sectionHeight = section.offsetHeight;
+        const sectionId = section.getAttribute('id');
+        
+        if (scrollPosition >= sectionTop && scrollPosition < sectionTop + sectionHeight) {
+            document.querySelectorAll('.nav-btn').forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === `#${sectionId}`) {
+                    link.classList.add('active');
+                }
+            });
+        }
+    });
+});
+
 // Scroll Reveal Animation
 ScrollReveal({
     reset: true,
@@ -124,19 +168,315 @@ const typedProfession = new Typed('.multiple-text', {
     loop: true
 });
 
-// Tab functionality for About section
-const tabLinks = document.getElementsByClassName('tab-links');
-const tabContents = document.getElementsByClassName('tab-contents');
+// Certifications Section Functionality
+function initCertifications() {
+    // Category filter functionality
+    const tabBtns = document.querySelectorAll('.tab-btn');
+    const certificateCards = document.querySelectorAll('.certificate-card');
+    
+    tabBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            // Remove active class from all buttons
+            tabBtns.forEach(b => b.classList.remove('active'));
+            // Add active class to clicked button
+            btn.classList.add('active');
+            
+            const category = btn.dataset.category;
+            
+            // Show/hide certificates based on category
+            certificateCards.forEach(card => {
+                if (category === 'all' || card.dataset.category === category) {
+                    card.style.display = 'flex';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        });
+    });
+    
+    // Certificate modal functionality
+    const viewBtns = document.querySelectorAll('.view-btn');
+    const modal = document.getElementById('certificateModal');
+    const modalImg = document.getElementById('modalImage');
+    const closeModal = document.getElementById('closeModal');
+    
+    viewBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const certificatePath = btn.dataset.certificate;
+            modalImg.src = certificatePath;
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        });
+    });
+    
+    closeModal.addEventListener('click', () => {
+        modal.classList.remove('active');
+        document.body.style.overflow = 'auto';
+    });
+    
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+            modal.classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+    });
+}
 
-function opentab(tabname) {
-    for (tablink of tabLinks) {
-        tablink.classList.remove('active-link');
+// Initialize certifications when in view
+const certificationsObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            initCertifications();
+            certificationsObserver.unobserve(entry.target);
+        }
+    });
+}, { threshold: 0.1 });
+
+const certificationsSection = document.querySelector('.certifications');
+if (certificationsSection) {
+    certificationsObserver.observe(certificationsSection);
+}
+
+// Leadership Section Animation
+function initLeadership() {
+    // Floating elements animation
+    const floatingElements = document.querySelectorAll('.floating-element');
+    floatingElements.forEach(el => {
+        const duration = parseInt(el.style.animationDuration) || 10000;
+        setInterval(() => {
+            el.style.animation = 'none';
+            void el.offsetWidth; // Trigger reflow
+            el.style.animation = `float ${duration/1000}s ease-in-out infinite`;
+        }, duration);
+    });
+
+    const cards = document.querySelectorAll('.leadership-card');
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry, index) => {
+            if (entry.isIntersecting) {
+                setTimeout(() => {
+                    entry.target.style.opacity = 1;
+                    entry.target.style.transform = 'translateY(0)';
+                    
+                    // Activate timeline animation
+                    const timeline = entry.target.querySelector('.timeline-line');
+                    const starItems = entry.target.querySelectorAll('.star-item');
+                    
+                    if (timeline) {
+                        timeline.classList.add('active');
+                        
+                        // Animate star items sequentially
+                        starItems.forEach((item, i) => {
+                            setTimeout(() => {
+                                item.classList.add('active');
+                            }, i * 300);
+                        });
+                    }
+                    
+                    // Start counting animation for this card's metrics
+                    if (entry.target.querySelector('.count-anim')) {
+                        startCounting(entry.target);
+                    }
+                }, index * 150);
+            }
+        });
+    }, { threshold: 0.1 });
+
+    cards.forEach((card, index) => {
+        observer.observe(card);
+    });
+
+    // Counting animation function
+    function startCounting(card) {
+        const metricValues = card.querySelectorAll('.count-anim');
+        let delay = 0;
+        
+        metricValues.forEach(metric => {
+            setTimeout(() => {
+                const target = parseFloat(metric.dataset.target);
+                const suffix = metric.dataset.suffix || '';
+                const duration = 1500;
+                let start = 0;
+                const increment = target / (duration / 16);
+                
+                const updateCounter = () => {
+                    start += increment;
+                    if (start < target) {
+                        if (suffix === '★') {
+                            metric.textContent = start.toFixed(1) + suffix;
+                        } else if (suffix === '%' || suffix === '+') {
+                            metric.textContent = Math.floor(start) + suffix;
+                        } else {
+                            metric.textContent = Math.floor(start).toLocaleString() + suffix;
+                        }
+                        requestAnimationFrame(updateCounter);
+                    } else {
+                        metric.textContent = target.toLocaleString() + suffix;
+                    }
+                };
+                
+                updateCounter();
+            }, delay);
+            
+            delay += 300; // 0.3s delay between each metric
+        });
     }
-    for (tabcontent of tabContents) {
-        tabcontent.classList.remove('active-tab');
+}
+
+// Initialize leadership section when in view
+const leadershipObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            initLeadership();
+            leadershipObserver.unobserve(entry.target);
+        }
+    });
+}, { threshold: 0.1 });
+
+const leadershipSection = document.querySelector('.leadership');
+if (leadershipSection) {
+    leadershipObserver.observe(leadershipSection);
+}
+
+// Testimonials Carousel
+function initTestimonials() {
+    const track = document.querySelector('.testimonials-track');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const indicators = document.querySelectorAll('.radio-indicator');
+    const container = document.querySelector('.testimonials-container');
+    const cards = document.querySelectorAll('.testimonial-card');
+    
+    let currentIndex = 0;
+    const cardCount = 4; // Original testimonials count
+    let isTransitioning = false;
+    let autoScrollInterval;
+    
+    // Initialize track width and position
+    function initializeTrack() {
+        const cardWidth = cards[0].offsetWidth + parseInt(window.getComputedStyle(track).gap.replace('px', ''));
+        track.style.width = `${cardWidth * (cardCount * 2)}px`;
+        updateTrackPosition(false);
     }
-    event.currentTarget.classList.add('active-link');
-    document.getElementById(tabname).classList.add('active-tab');
+    
+    // Update track position
+    function updateTrackPosition(animate = true) {
+        const cardWidth = cards[0].offsetWidth + parseInt(window.getComputedStyle(track).gap.replace('px', ''));
+        if (animate) {
+            track.style.transition = 'transform 0.5s ease';
+        } else {
+            track.style.transition = 'none';
+        }
+        track.style.transform = `translateX(-${currentIndex * cardWidth}px)`;
+        
+        // Update indicators
+        updateIndicators();
+    }
+    
+    // Update navigation indicators
+    function updateIndicators() {
+        const activeIndex = currentIndex % cardCount;
+        indicators.forEach((indicator, index) => {
+            indicator.classList.toggle('active', index === activeIndex);
+        });
+    }
+    
+    // Go to specific index
+    function goToIndex(index) {
+        if (isTransitioning) return;
+        isTransitioning = true;
+        
+        currentIndex = index;
+        updateTrackPosition();
+        
+        setTimeout(() => {
+            isTransitioning = false;
+            // Check if we need to loop around
+            if (currentIndex >= cardCount * 2 - 2) {
+                currentIndex = cardCount;
+                updateTrackPosition(false);
+            } else if (currentIndex <= 0) {
+                currentIndex = cardCount;
+                updateTrackPosition(false);
+            }
+        }, 500);
+    }
+    
+    // Go to next testimonial
+    function goToNext() {
+        goToIndex(currentIndex + 1);
+    }
+    
+    // Go to previous testimonial
+    function goToPrev() {
+        goToIndex(currentIndex - 1);
+    }
+    
+    // Start auto-scrolling
+    function startAutoScroll() {
+        autoScrollInterval = setInterval(goToNext, 6000);
+    }
+    
+    // Stop auto-scrolling
+    function stopAutoScroll() {
+        clearInterval(autoScrollInterval);
+    }
+    
+    // Event listeners
+    prevBtn.addEventListener('click', () => {
+        stopAutoScroll();
+        goToPrev();
+        startAutoScroll();
+    });
+    
+    nextBtn.addEventListener('click', () => {
+        stopAutoScroll();
+        goToNext();
+        startAutoScroll();
+    });
+    
+    indicators.forEach(indicator => {
+        indicator.addEventListener('click', function() {
+            const targetIndex = parseInt(this.dataset.index);
+            stopAutoScroll();
+            goToIndex(targetIndex);
+            startAutoScroll();
+        });
+    });
+     
+    // Pause on hover
+    container.addEventListener('mouseenter', stopAutoScroll);
+    container.addEventListener('mouseleave', startAutoScroll);
+    
+    // Handle window resize
+    window.addEventListener('resize', function() {
+        initializeTrack();
+        updateIndicators();
+    });
+    
+    // Initialize
+    initializeTrack();
+    startAutoScroll();
+    
+    // Handle transition end for seamless looping
+    track.addEventListener('transitionend', function() {
+        isTransitioning = false;
+    });
+}
+
+// Initialize testimonials when in view
+const testimonialsObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            initTestimonials();
+            testimonialsObserver.unobserve(entry.target);
+        }
+    });
+}, { threshold: 0.1 });
+
+const testimonialsSection = document.querySelector('.testimonials');
+if (testimonialsSection) {
+    testimonialsObserver.observe(testimonialsSection);
 }
 
 // Animate skill pie charts with repeating effect
@@ -247,219 +587,3 @@ if (homeImg) {
         homeImg.style.transform = 'scale(1)';
     });
 }
-
-// Active nav link highlighting
-const sections = document.querySelectorAll('section');
-const navLinks = document.querySelectorAll('.nav-btn');
-
-window.addEventListener('scroll', () => {
-    let current = '';
-    
-    sections.forEach(section => {
-        const sectionTop = section.offsetTop;
-        const sectionHeight = section.clientHeight;
-        
-        if (pageYOffset >= (sectionTop - 300)) {
-            current = section.getAttribute('id');
-        }
-    });
-    
-    navLinks.forEach(link => {
-        link.classList.remove('active');
-        if (link.getAttribute('href').includes(current)) {
-            link.classList.add('active');
-        }
-    });
-});
-
-// Certifications Section Functionality
-function initCertifications() {
-    const tabButtons = document.querySelectorAll('.tab-btn');
-    const certificateCards = document.querySelectorAll('.certificate-card');
-    const viewButtons = document.querySelectorAll('.view-btn');
-    const modal = document.getElementById('certificateModal');
-    const modalImage = document.getElementById('modalImage');
-    const closeModal = document.getElementById('closeModal');
-    
-    // Set Data Analytics as default view
-    const defaultCategory = '1';
-    filterCertificates(defaultCategory);
-    
-    tabButtons.forEach(button => {
-        button.addEventListener('click', () => {
-            // Remove active class from all buttons
-            tabButtons.forEach(btn => btn.classList.remove('active'));
-            // Add active class to clicked button
-            button.classList.add('active');
-            
-            const category = button.getAttribute('data-category');
-            filterCertificates(category);
-        });
-    });
-    
-    function filterCertificates(category) {
-        certificateCards.forEach(card => {
-            if (category === 'all' || card.getAttribute('data-category') === category) {
-                card.style.display = 'block';
-                // Trigger animation again when showing
-                card.style.animation = 'none';
-                card.offsetHeight; // Trigger reflow
-                card.style.animation = 'fadeInUp 0.6s forwards';
-            } else {
-                card.style.display = 'none';
-            }
-        });
-    }
-    
-    // Certificate viewing functionality
-    viewButtons.forEach(button => {
-        button.addEventListener('click', (e) => {
-            const certificatePath = button.getAttribute('data-certificate');
-            modalImage.src = certificatePath;
-            modal.classList.add('active');
-            document.body.style.overflow = 'hidden';
-        });
-    });
-    
-    closeModal.addEventListener('click', () => {
-        modal.classList.remove('active');
-        document.body.style.overflow = 'auto';
-    });
-    
-    modal.addEventListener('click', (e) => {
-        if (e.target === modal) {
-            modal.classList.remove('active');
-            document.body.style.overflow = 'auto';
-        }
-    });
-    
-    // Close modal with Escape key
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && modal.classList.contains('active')) {
-            modal.classList.remove('active');
-            document.body.style.overflow = 'auto';
-        }
-    });
-}
-
-// Initialize certifications when the section is in view
-const certificationsObserver = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-        if (entry.isIntersecting) {
-            initCertifications();
-            certificationsObserver.unobserve(entry.target);
-        }
-    });
-}, { threshold: 0.1 });
-
-const certificationsSection = document.querySelector('.certifications');
-if (certificationsSection) {
-    certificationsObserver.observe(certificationsSection);
-}
-
-// Leadership Section Animation
-function initLeadership() {
-    const cards = document.querySelectorAll('.leadership-card');
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach((entry, index) => {
-            if (entry.isIntersecting) {
-                setTimeout(() => {
-                    entry.target.style.opacity = 1;
-                    entry.target.style.transform = 'translateY(0)';
-                    
-                    // Activate timeline animation
-                    const timeline = entry.target.querySelector('.timeline-line');
-                    const starItems = entry.target.querySelectorAll('.star-item');
-                    
-                    if (timeline) {
-                        timeline.classList.add('active');
-                        
-                        // Animate star items sequentially
-                        starItems.forEach((item, i) => {
-                            setTimeout(() => {
-                                item.classList.add('active');
-                            }, i * 300);
-                        });
-                    }
-                    
-                    // Start counting animation for this card's metrics
-                    if (entry.target.querySelector('.count-anim')) {
-                        startCounting(entry.target);
-                    }
-                }, index * 150);
-            }
-        });
-    }, { threshold: 0.1 });
-
-    cards.forEach((card, index) => {
-        card.style.transitionDelay = `${index * 0.1}s`;
-        observer.observe(card);
-    });
-
-    // Counting animation function
-    function startCounting(card) {
-        const metricValues = card.querySelectorAll('.count-anim');
-        let delay = 0;
-        
-        metricValues.forEach(metric => {
-            setTimeout(() => {
-                const target = parseFloat(metric.dataset.target);
-                const suffix = metric.dataset.suffix || '';
-                const duration = 1500;
-                let start = 0;
-                const increment = target / (duration / 16);
-                
-                const updateCounter = () => {
-                    start += increment;
-                    if (start < target) {
-                        if (suffix === '★') {
-                            metric.textContent = start.toFixed(1) + suffix;
-                        } else if (suffix === '%' || suffix === '+') {
-                            metric.textContent = Math.floor(start) + suffix;
-                        } else {
-                            metric.textContent = Math.floor(start).toLocaleString() + suffix;
-                        }
-                        requestAnimationFrame(updateCounter);
-                    } else {
-                        metric.textContent = target.toLocaleString() + suffix;
-                    }
-                };
-                
-                updateCounter();
-            }, delay);
-            
-            delay += 300; // 0.3s delay between each metric
-        });
-    }
-}
-
-// Initialize leadership section when in view
-const leadershipObserver = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-        if (entry.isIntersecting) {
-            initLeadership();
-            leadershipObserver.unobserve(entry.target);
-        }
-    });
-}, { threshold: 0.1 });
-
-const leadershipSection = document.querySelector('.leadership');
-if (leadershipSection) {
-    leadershipObserver.observe(leadershipSection);
-}
-
-// Add certifications to ScrollReveal
-ScrollReveal().reveal('.certificate-card', { 
-    origin: 'bottom',
-    interval: 100 
-});
-
-// Add leadership cards to ScrollReveal
-ScrollReveal().reveal('.leadership-card', {
-    origin: 'bottom',
-    interval: 100
-
-    
-});
-
-
