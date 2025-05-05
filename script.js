@@ -587,3 +587,47 @@ if (homeImg) {
         homeImg.style.transform = 'scale(1)';
     });
 }
+// Add this to your existing script.js
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize project card animations
+    const projectCards = document.querySelectorAll('.project-card');
+    
+    // Set animation delay index for each card
+    projectCards.forEach((card, index) => {
+        card.style.setProperty('--i', index);
+    });
+
+    // Button shine effect
+    const projectLinks = document.querySelectorAll('.project-link');
+    projectLinks.forEach(link => {
+        link.addEventListener('mouseenter', function() {
+            this.querySelector('i').style.transform = 'translateX(3px)';
+        });
+        link.addEventListener('mouseleave', function() {
+            this.querySelector('i').style.transform = 'translateX(0)';
+        });
+    });
+
+    // Scroll reveal for projects
+    ScrollReveal().reveal('.project-card', {
+        delay: 200,
+        interval: 100,
+        origin: 'bottom',
+        distance: '30px',
+        easing: 'cubic-bezier(0.5, 0, 0, 1)',
+        reset: true
+    });
+});
+
+// Add this to your existing Intersection Observer code
+const projectsObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            entry.target.style.animationPlayState = 'running';
+        }
+    });
+}, { threshold: 0.1 });
+
+document.querySelectorAll('.project-card').forEach(card => {
+    projectsObserver.observe(card);
+});
