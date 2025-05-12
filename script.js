@@ -57,119 +57,157 @@ document.addEventListener('DOMContentLoaded', function() {
     setTimeout(() => {
         scrollProgressContainer.style.transition = 'opacity 0.3s ease';
     }, 1000);
+
+    // Initialize all sections
+    initDarkMode();
+    initMenu();
+    initSmoothScrolling();
+    initScrollReveal();
+    initTypedJS();
+    initCertifications();
+    initLeadership();
+    initTestimonials();
+    initSkillsAnimation();
 });
 
 // Dark/Light Mode Toggle
-let darkModeIcon = document.querySelector('#darkMode-icon');
-let menuIcon = document.querySelector('#menu-icon');
-let navbar = document.querySelector('.navbar');
-
-darkModeIcon.onclick = () => {
-    darkModeIcon.classList.toggle('bx-sun');
-    document.body.classList.toggle('dark-mode');
+function initDarkMode() {
+    const darkModeIcon = document.querySelector('#darkMode-icon');
+    if (darkModeIcon) {
+        darkModeIcon.onclick = () => {
+            darkModeIcon.classList.toggle('bx-sun');
+            document.body.classList.toggle('dark-mode');
+        };
+    }
 }
 
 // Menu Toggle
-menuIcon.onclick = () => {
-    menuIcon.classList.toggle('bx-x');
-    navbar.classList.toggle('active');
-}
+function initMenu() {
+    const menuIcon = document.querySelector('#menu-icon');
+    const navbar = document.querySelector('.navbar');
 
-// Close menu when clicking on nav links or scrolling
-document.querySelectorAll('.nav-btn').forEach(link => {
-    link.addEventListener('click', () => {
-        menuIcon.classList.remove('bx-x');
-        navbar.classList.remove('active');
-    });
-});
+    if (menuIcon && navbar) {
+        menuIcon.onclick = () => {
+            menuIcon.classList.toggle('bx-x');
+            navbar.classList.toggle('active');
+        };
 
-window.onscroll = () => {
-    menuIcon.classList.remove('bx-x');
-    navbar.classList.remove('active');
+        // Close menu when clicking on nav links or scrolling
+        document.querySelectorAll('.nav-btn').forEach(link => {
+            link.addEventListener('click', () => {
+                menuIcon.classList.remove('bx-x');
+                navbar.classList.remove('active');
+            });
+        });
+
+        window.onscroll = () => {
+            menuIcon.classList.remove('bx-x');
+            navbar.classList.remove('active');
+        };
+    }
 }
 
 // Sticky Header
-window.addEventListener('scroll', () => {
-    let header = document.querySelector('.header');
-    header.classList.toggle('sticky', window.scrollY > 100);
-});
+function initStickyHeader() {
+    window.addEventListener('scroll', () => {
+        const header = document.querySelector('.header');
+        if (header) {
+            header.classList.toggle('sticky', window.scrollY > 100);
+        }
+    });
+}
 
 // Smooth scrolling for all navigation links
-document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-    anchor.addEventListener('click', function(e) {
-        e.preventDefault();
-        
-        const targetId = this.getAttribute('href');
-        if (targetId === '#') return;
-        
-        const targetElement = document.querySelector(targetId);
-        if (targetElement) {
-            window.scrollTo({
-                top: targetElement.offsetTop - 100,
-                behavior: 'smooth'
-            });
+function initSmoothScrolling() {
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function(e) {
+            e.preventDefault();
             
-            // Update active nav link
-            document.querySelectorAll('.nav-btn').forEach(link => {
-                link.classList.remove('active');
-            });
-            this.classList.add('active');
-        }
+            const targetId = this.getAttribute('href');
+            if (targetId === '#') return;
+            
+            const targetElement = document.querySelector(targetId);
+            if (targetElement) {
+                window.scrollTo({
+                    top: targetElement.offsetTop - 100,
+                    behavior: 'smooth'
+                });
+                
+                // Update active nav link
+                document.querySelectorAll('.nav-btn').forEach(link => {
+                    link.classList.remove('active');
+                });
+                this.classList.add('active');
+            }
+        });
     });
-});
+}
 
 // Active nav link on scroll
-window.addEventListener('scroll', () => {
-    const scrollPosition = window.scrollY;
-    
-    document.querySelectorAll('section').forEach(section => {
-        const sectionTop = section.offsetTop - 150;
-        const sectionHeight = section.offsetHeight;
-        const sectionId = section.getAttribute('id');
+function initActiveNavLinks() {
+    window.addEventListener('scroll', () => {
+        const scrollPosition = window.scrollY;
         
-        if (scrollPosition >= sectionTop && scrollPosition < sectionTop + sectionHeight) {
-            document.querySelectorAll('.nav-btn').forEach(link => {
-                link.classList.remove('active');
-                if (link.getAttribute('href') === `#${sectionId}`) {
-                    link.classList.add('active');
-                }
-            });
-        }
+        document.querySelectorAll('section').forEach(section => {
+            const sectionTop = section.offsetTop - 150;
+            const sectionHeight = section.offsetHeight;
+            const sectionId = section.getAttribute('id');
+            
+            if (scrollPosition >= sectionTop && scrollPosition < sectionTop + sectionHeight) {
+                document.querySelectorAll('.nav-btn').forEach(link => {
+                    link.classList.remove('active');
+                    if (link.getAttribute('href') === `#${sectionId}`) {
+                        link.classList.add('active');
+                    }
+                });
+            }
+        });
     });
-});
+}
 
 // Scroll Reveal Animation
-ScrollReveal({
-    reset: true,
-    distance: '80px',
-    duration: 2000,
-    delay: 200
-});
+function initScrollReveal() {
+    if (typeof ScrollReveal !== 'undefined') {
+        ScrollReveal({
+            reset: true,
+            distance: '80px',
+            duration: 2000,
+            delay: 200
+        });
 
-ScrollReveal().reveal('.home-content, .heading', { origin: 'top' });
-ScrollReveal().reveal('.home-img img, .education-container, .projects-box, .contact form', { origin: 'bottom' });
-ScrollReveal().reveal('.home-content h1, .about-img img', { origin: 'left' });
-ScrollReveal().reveal('.home-content h3, .home-content p, .about-content', { origin: 'right' });
+        ScrollReveal().reveal('.home-content, .heading', { origin: 'top' });
+        ScrollReveal().reveal('.home-img img, .education-container, .projects-box, .contact form', { origin: 'bottom' });
+        ScrollReveal().reveal('.home-content h1, .about-img img', { origin: 'left' });
+        ScrollReveal().reveal('.home-content h3, .home-content p, .about-content', { origin: 'right' });
+    }
+}
 
 // Typed.js Animations
-const typedName = new Typed('.typed-name', {
-    strings: ['Anirudh Chaudhary'],
-    typeSpeed: 100,
-    backSpeed: 50,
-    backDelay: 1000,
-    showCursor: false
-});
+function initTypedJS() {
+    if (typeof Typed !== 'undefined') {
+        const typedName = new Typed('.typed-name', {
+            strings: ['Anirudh Chaudhary'],
+            typeSpeed: 100,
+            backSpeed: 50,
+            backDelay: 1000,
+            showCursor: false
+        });
 
-const typedProfession = new Typed('.multiple-text', {
-    strings: ['Data-Driven Business Analyst', 'SQL Expert', 'Power BI Specialist', 'Excel Wizard'],
-    typeSpeed: 100,
-    backSpeed: 100,
-    backDelay: 1000,
-    loop: true
-});
+        const typedProfession = new Typed('.multiple-text', {
+            strings: ['Data-Driven Business Analyst', 'SQL Expert', 'Power BI Specialist', 'Excel Wizard'],
+            typeSpeed: 100,
+            backSpeed: 100,
+            backDelay: 1000,
+            loop: true
+        });
+    }
+}
 
 // Certifications Section Functionality
 function initCertifications() {
+    const certificationsSection = document.querySelector('.certifications');
+    if (!certificationsSection) return;
+
     // Category filter functionality
     const tabBtns = document.querySelectorAll('.tab-btn');
     const certificateCards = document.querySelectorAll('.certificate-card');
@@ -196,56 +234,46 @@ function initCertifications() {
     
     // Certificate modal functionality
     const viewBtns = document.querySelectorAll('.view-btn');
-    const modal = document.getElementById('certificateModal');
-    const modalImg = document.getElementById('modalImage');
-    const closeModal = document.getElementById('closeModal');
+    const modal = document.querySelector('.modal-overlay');
+    const modalImg = document.querySelector('.certificate-image');
+    const closeModal = document.querySelector('.close-modal');
     
-    viewBtns.forEach(btn => {
-        btn.addEventListener('click', () => {
-            const certificatePath = btn.dataset.certificate;
-            modalImg.src = certificatePath;
-            modal.classList.add('active');
-            document.body.style.overflow = 'hidden';
+    if (viewBtns.length && modal && modalImg && closeModal) {
+        viewBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const certificatePath = btn.dataset.certificate;
+                modalImg.src = certificatePath;
+                modal.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            });
         });
-    });
-    
-    closeModal.addEventListener('click', () => {
-        modal.classList.remove('active');
-        document.body.style.overflow = 'auto';
-    });
-    
-    modal.addEventListener('click', (e) => {
-        if (e.target === modal) {
+        
+        closeModal.addEventListener('click', () => {
             modal.classList.remove('active');
             document.body.style.overflow = 'auto';
-        }
-    });
-}
-
-// Initialize certifications when in view
-const certificationsObserver = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-        if (entry.isIntersecting) {
-            initCertifications();
-            certificationsObserver.unobserve(entry.target);
-        }
-    });
-}, { threshold: 0.1 });
-
-const certificationsSection = document.querySelector('.certifications');
-if (certificationsSection) {
-    certificationsObserver.observe(certificationsSection);
+        });
+        
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                modal.classList.remove('active');
+                document.body.style.overflow = 'auto';
+            }
+        });
+    }
 }
 
 // Leadership Section Animation
 function initLeadership() {
+    const leadershipSection = document.querySelector('.leadership');
+    if (!leadershipSection) return;
+
     // Floating elements animation
     const floatingElements = document.querySelectorAll('.floating-element');
     floatingElements.forEach(el => {
         const duration = parseInt(el.style.animationDuration) || 10000;
         setInterval(() => {
             el.style.animation = 'none';
-            void el.offsetWidth; // Trigger reflow
+            void el.offsetWidth;
             el.style.animation = `float ${duration/1000}s ease-in-out infinite`;
         }, duration);
     });
@@ -276,13 +304,15 @@ function initLeadership() {
                     // Start counting animation for this card's metrics
                     if (entry.target.querySelector('.count-anim')) {
                         startCounting(entry.target);
+                        // Set interval to repeat every 3 seconds
+                        setInterval(() => startCounting(entry.target), 5000);
                     }
                 }, index * 150);
             }
         });
     }, { threshold: 0.1 });
 
-    cards.forEach((card, index) => {
+    cards.forEach((card) => {
         observer.observe(card);
     });
 
@@ -318,316 +348,260 @@ function initLeadership() {
                 updateCounter();
             }, delay);
             
-            delay += 300; // 0.3s delay between each metric
+            delay += 300;
         });
     }
 }
 
-// Initialize leadership section when in view
-const leadershipObserver = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-        if (entry.isIntersecting) {
-            initLeadership();
-            leadershipObserver.unobserve(entry.target);
-        }
-    });
-}, { threshold: 0.1 });
+// Skills Animation
+function initSkillsAnimation() {
+    const skillsSection = document.querySelector('.skills');
+    if (!skillsSection) return;
 
-const leadershipSection = document.querySelector('.leadership');
-if (leadershipSection) {
-    leadershipObserver.observe(leadershipSection);
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                // Start the animation loop
+                animateSkills();
+                setInterval(animateSkills, 4000); // Repeat every 4 seconds
+                observer.unobserve(entry.target);
+            }
+        });
+    }, { threshold: 0.2 });
+
+    observer.observe(skillsSection);
+
+    function animateSkills() {
+        const skillItems = document.querySelectorAll('.skill-item');
+        const animationDuration = 2500; // 2.5 seconds for both pie and count
+        
+        // First reset all animations
+        skillItems.forEach((item) => {
+            const pieFill = item.querySelector('.pie-fill');
+            const percentElement = item.querySelector('.percent');
+            
+            pieFill.style.transition = 'none';
+            pieFill.style.strokeDashoffset = '339.292';
+            percentElement.textContent = '0%';
+            
+            // Force reflow
+            void pieFill.offsetWidth;
+        });
+
+        // Then animate all together
+        setTimeout(() => {
+            skillItems.forEach((item) => {
+                const chart = item.querySelector('.chart');
+                const percent = parseInt(chart.getAttribute('data-percent'));
+                const pieFill = item.querySelector('.pie-fill');
+                const percentElement = item.querySelector('.percent');
+                
+                // Enable smooth transition
+                pieFill.style.transition = `stroke-dashoffset ${animationDuration}ms ease-in-out`;
+                
+                // Calculate the final offset
+                const offset = 339.292 * (100 - percent) / 100;
+                pieFill.style.strokeDashoffset = offset;
+                
+                // Animate percentage number
+                animateCount(percentElement, percent, animationDuration);
+            });
+        }, 100);
+    }
+
+    function animateCount(element, target, duration) {
+        let start = 0;
+        const startTime = performance.now();
+        
+        function updateNumber(currentTime) {
+            const elapsedTime = currentTime - startTime;
+            const progress = Math.min(elapsedTime / duration, 1);
+            const currentValue = Math.floor(progress * target);
+            
+            element.textContent = currentValue + '%';
+            
+            if (progress < 1) {
+                requestAnimationFrame(updateNumber);
+            }
+        }
+        
+        requestAnimationFrame(updateNumber);
+    }
 }
 
 // Testimonials Carousel
 function initTestimonials() {
+    const testimonialsSection = document.querySelector('.testimonials');
+    if (!testimonialsSection) return;
+
     const track = document.querySelector('.testimonials-track');
     const prevBtn = document.getElementById('prevBtn');
     const nextBtn = document.getElementById('nextBtn');
     const indicators = document.querySelectorAll('.radio-indicator');
     const container = document.querySelector('.testimonials-container');
-    const cards = document.querySelectorAll('.testimonial-card');
     
-    let currentIndex = 0;
-    const cardCount = 4; // Original testimonials count
-    let isTransitioning = false;
-    let autoScrollInterval;
+    // Get original cards
+    const originalCards = Array.from(document.querySelectorAll('.testimonial-card'));
+    const cardCount = originalCards.length;
     
-    // Initialize track width and position
-    function initializeTrack() {
-        const cardWidth = cards[0].offsetWidth + parseInt(window.getComputedStyle(track).gap.replace('px', ''));
-        track.style.width = `${cardWidth * (cardCount * 2)}px`;
-        updateTrackPosition(false);
+    if (cardCount === 0) return;
+    
+    // Clear track and rebuild with clones for infinite loop
+    track.innerHTML = '';
+    
+    // Add clones before originals (for left-to-right scroll)
+    originalCards.forEach(card => {
+        const clone = card.cloneNode(true);
+        track.appendChild(clone);
+    });
+    
+    // Add original cards
+    originalCards.forEach(card => {
+        track.appendChild(card);
+    });
+    
+    // Add clones after originals (for right-to-left scroll)
+    originalCards.forEach(card => {
+        const clone = card.cloneNode(true);
+        track.appendChild(clone);
+    });
+    
+    // Get all cards including clones
+    const allCards = Array.from(track.querySelectorAll('.testimonial-card'));
+    
+    // Initialize variables
+    let currentIndex = cardCount;
+    let isAnimating = false;
+    let scrollInterval;
+    let direction = 'right';
+    
+    function calculateCardWidth() {
+        if (allCards.length === 0) return 0;
+        const card = allCards[0];
+        const cardWidth = card.offsetWidth;
+        const gapWidth = parseInt(window.getComputedStyle(track).gap.replace('px', ''));
+        return cardWidth + gapWidth;
     }
     
-    // Update track position
     function updateTrackPosition(animate = true) {
-        const cardWidth = cards[0].offsetWidth + parseInt(window.getComputedStyle(track).gap.replace('px', ''));
+        const cardWidth = calculateCardWidth();
+        const offset = -currentIndex * cardWidth;
+        
         if (animate) {
-            track.style.transition = 'transform 0.5s ease';
+            track.style.transition = 'transform 0.8s cubic-bezier(0.33, 1, 0.68, 1)';
         } else {
             track.style.transition = 'none';
         }
-        track.style.transform = `translateX(-${currentIndex * cardWidth}px)`;
         
-        // Update indicators
+        track.style.transform = `translateX(${offset}px)`;
         updateIndicators();
     }
     
-    // Update navigation indicators
     function updateIndicators() {
-        const activeIndex = currentIndex % cardCount;
+        const activeIndex = (currentIndex - cardCount) % cardCount;
+        const normalizedIndex = activeIndex < 0 ? activeIndex + cardCount : activeIndex;
+        
         indicators.forEach((indicator, index) => {
-            indicator.classList.toggle('active', index === activeIndex);
+            indicator.classList.toggle('active', index === normalizedIndex);
         });
     }
     
-    // Go to specific index
-    function goToIndex(index) {
-        if (isTransitioning) return;
-        isTransitioning = true;
-        
+    function moveToIndex(index, animate = true) {
+        if (isAnimating) return;
         currentIndex = index;
-        updateTrackPosition();
+        isAnimating = true;
+        updateTrackPosition(animate);
+    }
+    
+    function handleTransitionEnd() {
+        isAnimating = false;
         
-        setTimeout(() => {
-            isTransitioning = false;
-            // Check if we need to loop around
-            if (currentIndex >= cardCount * 2 - 2) {
-                currentIndex = cardCount;
-                updateTrackPosition(false);
-            } else if (currentIndex <= 0) {
-                currentIndex = cardCount;
-                updateTrackPosition(false);
+        const totalCards = allCards.length;
+        const cardWidth = calculateCardWidth();
+        
+        if (currentIndex <= cardCount - 1) {
+            currentIndex = cardCount;
+            updateTrackPosition(false);
+        } else if (currentIndex >= cardCount * 2) {
+            currentIndex = cardCount * 2 - 1;
+            updateTrackPosition(false);
+        }
+    }
+    
+    function autoScroll() {
+        if (isAnimating) return;
+        
+        if (direction === 'right') {
+            if (currentIndex >= cardCount * 2 - 1) {
+                direction = 'left';
+                moveToIndex(currentIndex - 1);
+            } else {
+                moveToIndex(currentIndex + 1);
             }
-        }, 500);
+        } else {
+            if (currentIndex <= cardCount) {
+                direction = 'right';
+                moveToIndex(currentIndex + 1);
+            } else {
+                moveToIndex(currentIndex - 1);
+            }
+        }
     }
     
-    // Go to next testimonial
-    function goToNext() {
-        goToIndex(currentIndex + 1);
-    }
-    
-    // Go to previous testimonial
-    function goToPrev() {
-        goToIndex(currentIndex - 1);
-    }
-    
-    // Start auto-scrolling
     function startAutoScroll() {
-        autoScrollInterval = setInterval(goToNext, 6000);
+        stopAutoScroll();
+        scrollInterval = setInterval(autoScroll, 2000);
     }
     
-    // Stop auto-scrolling
     function stopAutoScroll() {
-        clearInterval(autoScrollInterval);
+        clearInterval(scrollInterval);
     }
     
     // Event listeners
+    track.addEventListener('transitionend', handleTransitionEnd);
+    
     prevBtn.addEventListener('click', () => {
         stopAutoScroll();
-        goToPrev();
+        direction = 'left';
+        moveToIndex(currentIndex - 1);
         startAutoScroll();
     });
     
     nextBtn.addEventListener('click', () => {
         stopAutoScroll();
-        goToNext();
+        direction = 'right';
+        moveToIndex(currentIndex + 1);
         startAutoScroll();
     });
     
     indicators.forEach(indicator => {
         indicator.addEventListener('click', function() {
-            const targetIndex = parseInt(this.dataset.index);
+            const targetIndex = parseInt(this.dataset.index) + cardCount;
             stopAutoScroll();
-            goToIndex(targetIndex);
+            direction = targetIndex > currentIndex ? 'right' : 'left';
+            moveToIndex(targetIndex);
             startAutoScroll();
         });
     });
-     
-    // Pause on hover
+    
     container.addEventListener('mouseenter', stopAutoScroll);
     container.addEventListener('mouseleave', startAutoScroll);
     
-    // Handle window resize
-    window.addEventListener('resize', function() {
-        initializeTrack();
-        updateIndicators();
+    let resizeTimer;
+    window.addEventListener('resize', () => {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(() => {
+            updateTrackPosition(false);
+        }, 250);
     });
     
     // Initialize
-    initializeTrack();
+    updateTrackPosition(false);
     startAutoScroll();
-    
-    // Handle transition end for seamless looping
-    track.addEventListener('transitionend', function() {
-        isTransitioning = false;
-    });
 }
 
-// Initialize testimonials when in view
-const testimonialsObserver = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-        if (entry.isIntersecting) {
-            initTestimonials();
-            testimonialsObserver.unobserve(entry.target);
-        }
-    });
-}, { threshold: 0.1 });
+// Initialize sticky header
+initStickyHeader();
+// Initialize active nav links
+initActiveNavLinks();
 
-const testimonialsSection = document.querySelector('.testimonials');
-if (testimonialsSection) {
-    testimonialsObserver.observe(testimonialsSection);
-}
-
-// Animate skill pie charts with repeating effect
-function animatePieCharts() {
-    const charts = document.querySelectorAll('.chart');
-    const animationDuration = 1500; // 1.5 seconds
-    const delayBetweenCharts = 300; // 0.3 seconds
-    const repeatInterval = 4000; // 4 seconds
-    
-    function animateChart(chart, index) {
-        const percent = chart.getAttribute('data-percent');
-        const pieFill = chart.querySelector('.pie-fill');
-        const percentElement = chart.querySelector('.percent');
-        
-        setTimeout(() => {
-            // Reset animation
-            pieFill.style.setProperty('--percent', '0');
-            percentElement.textContent = '0%';
-            
-            // Animate the pie fill
-            setTimeout(() => {
-                pieFill.style.setProperty('--percent', percent);
-                
-                // Animate the percentage number
-                let start = 0;
-                const end = parseInt(percent);
-                const duration = animationDuration;
-                const startTime = performance.now();
-                
-                function updateNumber(currentTime) {
-                    const elapsedTime = currentTime - startTime;
-                    const progress = Math.min(elapsedTime / duration, 1);
-                    const currentValue = Math.floor(progress * end);
-                    
-                    percentElement.textContent = currentValue + '%';
-                    
-                    if (progress < 1) {
-                        requestAnimationFrame(updateNumber);
-                    }
-                }
-                
-                requestAnimationFrame(updateNumber);
-            }, 50);
-        }, index * delayBetweenCharts);
-    }
-    
-    // Initial animation
-    charts.forEach((chart, index) => {
-        animateChart(chart, index);
-    });
-    
-    // Repeat animation every 4 seconds
-    setInterval(() => {
-        charts.forEach((chart, index) => {
-            animateChart(chart, index);
-        });
-    }, repeatInterval);
-}
-
-// Intersection Observer for skill charts
-const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-        if (entry.isIntersecting) {
-            animatePieCharts();
-            observer.unobserve(entry.target);
-        }
-    });
-}, { threshold: 0.5 });
-
-const skillsSection = document.querySelector('.skills');
-observer.observe(skillsSection);
-
-// Reset animations when switching dark/light mode
-darkModeIcon.addEventListener('click', () => {
-    // Re-animate the pie charts after mode switch
-    setTimeout(() => {
-        animatePieCharts();
-    }, 500);
-});
-
-// Popup effect for icons
-const popupIcons = document.querySelectorAll('.popup-icon');
-popupIcons.forEach(icon => {
-    icon.addEventListener('mouseenter', () => {
-        icon.querySelector('i').style.transform = 'scale(1.2)';
-    });
-    icon.addEventListener('mouseleave', () => {
-        icon.querySelector('i').style.transform = 'scale(1)';
-    });
-});
-
-// Zoom out effect for about image
-const aboutImg = document.querySelector('.about-img img');
-aboutImg.addEventListener('mouseenter', () => {
-    aboutImg.style.transform = 'scale(0.95)';
-});
-aboutImg.addEventListener('mouseleave', () => {
-    aboutImg.style.transform = 'scale(1)';
-});
-
-// Zoom out effect for home image
-const homeImg = document.querySelector('.home-img img');
-if (homeImg) {
-    homeImg.addEventListener('mouseenter', () => {
-        homeImg.style.transform = 'scale(0.95)';
-    });
-    homeImg.addEventListener('mouseleave', () => {
-        homeImg.style.transform = 'scale(1)';
-    });
-}
-// Add this to your existing script.js
-document.addEventListener('DOMContentLoaded', function() {
-    // Initialize project card animations
-    const projectCards = document.querySelectorAll('.project-card');
-    
-    // Set animation delay index for each card
-    projectCards.forEach((card, index) => {
-        card.style.setProperty('--i', index);
-    });
-
-    // Button shine effect
-    const projectLinks = document.querySelectorAll('.project-link');
-    projectLinks.forEach(link => {
-        link.addEventListener('mouseenter', function() {
-            this.querySelector('i').style.transform = 'translateX(3px)';
-        });
-        link.addEventListener('mouseleave', function() {
-            this.querySelector('i').style.transform = 'translateX(0)';
-        });
-    });
-
-    // Scroll reveal for projects
-    ScrollReveal().reveal('.project-card', {
-        delay: 200,
-        interval: 100,
-        origin: 'bottom',
-        distance: '30px',
-        easing: 'cubic-bezier(0.5, 0, 0, 1)',
-        reset: true
-    });
-});
-
-// Add this to your existing Intersection Observer code
-const projectsObserver = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-        if (entry.isIntersecting) {
-            entry.target.style.animationPlayState = 'running';
-        }
-    });
-}, { threshold: 0.1 });
-
-document.querySelectorAll('.project-card').forEach(card => {
-    projectsObserver.observe(card);
-});
