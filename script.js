@@ -604,4 +604,3 @@ function initTestimonials() {
 initStickyHeader();
 // Initialize active nav links
 initActiveNavLinks();
-
