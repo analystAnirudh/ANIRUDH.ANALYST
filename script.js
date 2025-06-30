@@ -50,8 +50,102 @@ window.addEventListener('scroll', function() {
         progressDot.style.boxShadow = '0 0 0 3px rgba(255, 255, 255, 0.9), 0 0 15px rgba(255, 230, 109, 1)';
     }
 });
+// Announcement Visibility Control - FINAL VERSION
+document.addEventListener('DOMContentLoaded', function() {
+  const announcement = document.querySelector('.announcement-marquee');
+  if (!announcement) return;
 
+  let lastScroll = 0;
+  const threshold = 50; // Hide after scrolling 50px down
+
+  function handleScroll() {
+    const currentScroll = window.pageYOffset || document.documentElement.scrollTop;
+    
+    if (currentScroll <= 0) {
+      // At the very top - show announcement
+      announcement.classList.remove('hidden');
+    } else if (currentScroll > threshold) {
+      // Scrolled down - hide announcement
+      announcement.classList.add('hidden');
+    }
+    
+    lastScroll = currentScroll;
+  }
+
+  // Use passive scroll for better performance
+  window.addEventListener('scroll', handleScroll, { passive: true });
+  
+  // Initial check
+  handleScroll();
+});
+// ===== ANVESHA CORE FUNCTIONALITY =====
+class AnveshaAI {
+  constructor() {
+    this.knowledge = {
+      skills: [
+        "Advanced Excel (95% proficiency)",
+        "Power BI (90% proficiency)", 
+        "SQL (85% proficiency)"
+      ],
+      projects: {
+        blinkit: "Optimized delivery performance using geo-analysis...",
+        amazon: "Sales analytics across 50+ categories..."
+      }
+    };
+  }
+
+  respond(query) {
+    const lowerQuery = query.toLowerCase();
+    
+    if (lowerQuery.includes('skill')) {
+      return `Anirudh's core skills:\n${this.knowledge.skills.join('\n')}`;
+    }
+    else if (lowerQuery.includes('blinkit')) {
+      return this.knowledge.projects.blinkit;
+    }
+    else {
+      return "I specialize in Anirudh's data analysis projects. Ask about:\n• Skills\n• Blinkit project\n• Amazon dashboard";
+    }
+  }
+}
+
+function initAnvesha() {
+  const anvesha = new AnveshaAI();
+  const container = document.getElementById('anvesha-container');
+  const launcher = document.getElementById('anvesha-launcher');
+  
+  // Toggle visibility
+  launcher.addEventListener('click', () => {
+    container.classList.toggle('active');
+  });
+
+  // Message handling
+  document.querySelector('.anvesha-send').addEventListener('click', () => {
+    const input = document.querySelector('.anvesha-input-container textarea');
+    const message = input.value.trim();
+    if (!message) return;
+    
+    // Add user message
+    const userMsg = document.createElement('div');
+    userMsg.className = 'anvesha-message user';
+    userMsg.textContent = message;
+    document.querySelector('.anvesha-messages').appendChild(userMsg);
+    
+    // Generate response
+    setTimeout(() => {
+      const response = anvesha.respond(message);
+      const botMsg = document.createElement('div');
+      botMsg.className = 'anvesha-message bot';
+      botMsg.textContent = response;
+      document.querySelector('.anvesha-messages').appendChild(botMsg);
+    }, 800);
+    
+    input.value = '';
+  });
+}
+// ===== END ANVESHA CORE =====
 // Initialize on load
+initAnvesha(); // Initialize AI chatbot
 document.addEventListener('DOMContentLoaded', function() {
     const scrollProgressContainer = document.querySelector('.scroll-progress-container');
     setTimeout(() => {
@@ -604,3 +698,129 @@ function initTestimonials() {
 initStickyHeader();
 // Initialize active nav links
 initActiveNavLinks();
+// Add this to your script.js file
+document.addEventListener('DOMContentLoaded', function() {
+  // Initialize announcement bar
+  const announcementBar = document.querySelector('.announcement-bar');
+  
+  if (announcementBar) {
+    // Make the bar more visible when user scrolls up (recruiter attention)
+    let lastScrollPosition = window.scrollY;
+    
+    window.addEventListener('scroll', function() {
+      const currentScrollPosition = window.scrollY;
+      
+      // If scrolling up
+      if (currentScrollPosition < lastScrollPosition) {
+        announcementBar.style.opacity = '1';
+        announcementBar.style.transform = 'translateY(0)';
+      } 
+      // If scrolling down past 100px
+      else if (currentScrollPosition > 100) {
+        announcementBar.style.opacity = '0.9';
+        announcementBar.style.transform = 'translateY(-10px)';
+      }
+      
+      lastScrollPosition = currentScrollPosition;
+    });
+    
+    // Add click event to focus on contact section
+    announcementBar.addEventListener('click', function() {
+      document.getElementById('contact')?.scrollIntoView({
+        behavior: 'smooth'
+      });
+      
+      // Pulse effect when clicked
+      this.style.animation = 'none';
+      void this.offsetWidth; // Trigger reflow
+      this.style.animation = 'pulse 0.5s';
+    });
+  }
+  
+  // Duplicate content for seamless looping (for Variant 2)
+  const announcementTrack = document.querySelector('.announcement-track');
+  if (announcementTrack) {
+    const content = document.querySelector('.announcement-content');
+    const clone = content.cloneNode(true);
+    announcementTrack.appendChild(clone);
+  }
+  // Projects Toggle Functionality
+function initProjectsToggle() {
+    const toggleInputs = document.querySelectorAll('.projects-toggle input[type="radio"]');
+    
+    toggleInputs.forEach(input => {
+        input.addEventListener('change', function() {
+            const highlight = document.querySelector('.toggle-highlight');
+            if (this.id === 'more-projects') {
+                highlight.style.transform = 'translateX(100%)';
+            } else {
+                highlight.style.transform = 'translateX(0)';
+            }
+        });
+    });
+}
+
+// Enhanced Gallery Functionality
+document.addEventListener('DOMContentLoaded', function() {
+  // Initialize elements
+  const galleryImages = document.querySelectorAll('.gallery-image');
+  const modal = document.getElementById('galleryModal');
+  const zoomedImg = document.getElementById('zoomedImage');
+  const closeBtn = document.querySelector('.close-modal');
+  let isAnimating = false;
+
+  // Image click handler
+  galleryImages.forEach(img => {
+    img.addEventListener('click', function() {
+      if (isAnimating) return;
+      
+      zoomedImg.src = this.src;
+      zoomedImg.alt = this.alt;
+      
+      // Show modal with animation
+      modal.classList.add('active');
+      document.body.style.overflow = 'hidden';
+      
+      isAnimating = true;
+      setTimeout(() => { isAnimating = false; }, 300);
+    });
+  });
+
+  // Close modal function
+  function closeModal() {
+    if (isAnimating) return;
+    
+    modal.classList.remove('active');
+    document.body.style.overflow = 'auto';
+    
+    isAnimating = true;
+    setTimeout(() => { isAnimating = false; }, 300);
+  }
+
+  // Close handlers
+  closeBtn.addEventListener('click', closeModal);
+  modal.addEventListener('click', function(e) {
+    if (e.target === modal) closeModal();
+  });
+  document.addEventListener('keydown', function(e) {
+    if (e.key === "Escape" && modal.classList.contains('active')) {
+      closeModal();
+    }
+  });
+
+  // Infinite scroll functionality
+  const galleryTrack = document.querySelector('.gallery-track');
+  const galleryItems = document.querySelectorAll('.gallery-item');
+  
+  galleryItems.forEach(item => {
+    const clone = item.cloneNode(true);
+    galleryTrack.appendChild(clone);
+  });
+
+  // Pause animation on hover
+  galleryTrack.addEventListener('mouseenter', () => {
+    galleryTrack.style.animationPlayState = 'paused';
+  });
+  galleryTrack.addEventListener('mouseleave', () => {
+    galleryTrack.style.animationPlayState = 'running';
+  });
